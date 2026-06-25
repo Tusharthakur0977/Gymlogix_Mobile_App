@@ -1,97 +1,56 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🏋️ GymLogix Mobile App
 
-# Getting Started
+A high-performance, feature-rich fitness and workout tracking mobile application built with **React Native**. GymLogix empowers users to design custom workout routines, track live workout sessions with complex metrics (like supersets and rest timers), monitor nutrition, and visualize fitness progress over time. 
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Designed with modern architectural patterns and advanced state management, this project showcases my ability to build production-ready, scalable mobile applications that solve complex real-world user interactions.
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🚀 Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **Core Framework:** React Native (v0.77.1) with TypeScript
+- **State Management:** Redux Toolkit (`@reduxjs/toolkit`) & React-Redux
+- **Routing & Navigation:** React Navigation v7 (Native Stack, Bottom Tabs, Drawer)
+- **Authentication:** Firebase Auth (`@react-native-firebase/auth`) & Google Sign-In
+- **Networking:** Axios for REST API interactions
+- **Local Storage:** AsyncStorage (`@react-native-async-storage/async-storage`)
+- **UI & Animations:** 
+  - `react-native-reanimated` & `react-native-gesture-handler` (60fps animations)
+  - `lottie-react-native` (complex vector animations)
+  - `react-native-linear-gradient` (modern UI styling)
+- **Data Visualization & Tools:**
+  - `react-native-gifted-charts` (performance analytics)
+  - `react-native-calendars` (workout scheduling)
+  - `react-native-draggable-flatlist` (custom workout builder)
+- **Monetization:** `react-native-iap` (In-App Purchases)
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
-```
+## ⭐ Spotlight Feature: The Live Workout Engine (`WorkoutProgramDetails`)
 
-## Step 2: Build and run your app
+The most technically complex feature of GymLogix is the **Live Workout Tracker**. This engine handles real-time workout execution, serving as the core interactive hub for the user while they are at the gym.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### **Engineering Challenges & Solutions:**
+- **Superset & Grouped Exercise Logic:** The engine isn't just a simple list. It dynamically handles both individual exercises and "Supersets" (grouped exercises performed back-to-back). This required creating a complex union type (`Exercise | Superset`) and a recursive rendering tree to manage nested states and UI without performance degradation.
+- **Concurrent Timer Management:** The app tracks individual time-under-tension for specific exercises while simultaneously tracking overall workout duration and rest periods between sets. I utilized Redux middleware and `InteractionManager` to ensure timers stay accurate even when the app goes into the background or the JS thread is busy.
+- **Resilient State Persistence (Draft Workouts):** Since users might accidentally close the app or lose connection, the Redux store (`LogWorkoutSlice`) handles "Draft" states. Actions like `setWorkoutProgress`, `pauseExerciseTimer`, and `setSupersetData` ensure every single rep and second is saved locally before pushing to the backend.
+- **Multi-Tab Performance Context:** The screen integrates four distinct contexts (Exercises, History, Details, and Coach’s Corner) inside a single fluid view. By memoizing components (`useMemo`, `useCallback`) and lazily loading history data via RTK, the app maintains a silky smooth 60fps even with hundreds of logged sets.
 
-### Android
+---
 
-```sh
-# Using npm
-npm run android
+## 🛠 Key Features
 
-# OR using Yarn
-yarn android
-```
+- **Custom Routine Builder:** Drag-and-drop interface (`react-native-draggable-flatlist`) allowing users to easily reorder exercises and construct personalized workout plans.
+- **Interactive Progress Charts:** Visualizing strength gains and volume metrics over time using `react-native-gifted-charts`.
+- **Comprehensive Nutrition Tracking:** Full meal logging modules (`LogMeal`, `AddNewMeal`, `IngredientList`) that integrate daily macro and calorie goals.
+- **Workout Scheduling:** Integrated calendar view (`react-native-calendars`) to plan future workouts and review past completion history.
+- **Premium Subscriptions:** Fully integrated in-app purchases (`react-native-iap`) providing seamless access to pro features and expert Coach's Corner insights.
+- **Secure Authentication:** Robust multi-provider login flow leveraging Firebase Auth and Google Sign-in.
 
-### iOS
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## 💡 Why This Project Stands Out
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+GymLogix isn't just a typical CRUD application—it is a deeply interactive, state-heavy mobile client that demands high performance. Building this required overcoming significant challenges in **background timer execution**, **complex state normalization (Redux Toolkit)**, and **UI thread optimization (Reanimated/Gesture Handler)**. 
 
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+By designing a bespoke Live Workout Engine capable of handling supersets, dynamic timers, and draft persistence, I successfully bridged the gap between a complex data architecture and an intuitive, premium user experience. This project demonstrates my proficiency in pushing the limits of React Native to deliver fluid, robust, and scalable mobile products.
