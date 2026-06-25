@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { SvgProps } from "react-native-svg";
+import COLORS from "../Utilities/Colors";
 
 // Define the props for the CustomIcon component
 type CustomIconProps = {

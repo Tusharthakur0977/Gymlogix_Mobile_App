@@ -1,82 +1,94 @@
+import React, {FC, useState} from 'react';
 import {
+  Image,
   ImageBackground,
-  Keyboard,
-  Platform,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   View,
-  ScrollView,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-} from "react-native";
-import React, { FC, useRef, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import IMAGES from "../../Assets/Images";
-import { ForgotPasswordProps } from "../../Typings/route";
-import CustomIcon from "../../Components/CustomIcon";
-import ICONS from "../../Assets/Icons";
-import {
-  horizontalScale,
-  hp,
-  verticalScale,
-  wp,
-} from "../../Utilities/Metrics";
-import { CustomText } from "../../Components/CustomText";
-import COLORS from "../../Utilities/Colors";
-import CustomButton from "../../Components/CustomButton";
-import Toast from "react-native-toast-message";
-import { forgotPasswordApi } from "../../Services/requestHandlers";
+} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import FONTS from '../../Assets/fonts';
+import IMAGES from '../../Assets/Images';
+import {CustomText} from '../../Components/CustomText';
+import {KeyboardAvoidingContainer} from '../../Components/KeyboardAvoidingComponent';
+import PrimaryButton from '../../Components/PrimaryButton';
+import {ForgotPasswordProps} from '../../Typings/route';
+import COLORS from '../../Utilities/Colors';
+import {isValidEmail, showCustomToast} from '../../Utilities/Helpers';
+import {horizontalScale, hp, verticalScale, wp} from '../../Utilities/Metrics';
+import {postData} from '../../APIServices/api';
+import ENDPOINTS from '../../APIServices/endPoints';
 
-const ForgotPassword: FC<ForgotPasswordProps> = ({ navigation }) => {
-  const [email, setEmail] = useState("");
+const ForgotPassword: FC<ForgotPasswordProps> = ({navigation}) => {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef<TextInput>(null);
+  const [inputDetails, setInputDetails] = useState({
+    email: '',
+  });
 
-  const isValidEmail = (email: string) => {
-    return email.includes("@") && email.includes(".") && email.length > 5;
+  const [errors, setErrors] = useState({email: ''});
+  const [message, setMessage] = useState<{
+    text: string;
+    type: 'success' | 'error' | null;
+  }>({
+    text: '',
+    type: null,
+  });
+
+  const validInput = () => {
+    let valid = true;
+    let newErrors = {
+      email: '',
+    };
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!inputDetails.email.trim()) {
+      valid = false;
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(inputDetails.email)) {
+      valid = false;
+      newErrors.email = 'Invalid email format';
+    }
+    setErrors(newErrors);
+    setMessage({text: '', type: null});
+    return valid;
   };
 
-  const handlePasswordRecovery = async () => {
-    if (!email) {
-      Toast.show({
-        type: "error",
-        text1: "Missing Email",
-        text2: "Please enter your email address.",
-      });
+  const handleForgotPassword = async () => {
+    if (!validInput()) {
       return;
     }
+    const data = {
+      email: inputDetails.email,
+    };
 
-    if (!isValidEmail(email)) {
-      Toast.show({
-        type: "error",
-        text1: "Invalid Email",
-        text2: "Please enter a valid email address (e.g., user@example.com).",
-      });
-      return;
-    }
-
-    Keyboard.dismiss();
     setLoading(true);
+    setMessage({text: '', type: null});
 
     try {
-      const response = await forgotPasswordApi(email);
-      if (response.success) {
-        Toast.show({
-          type: "success",
-          text1: "Recovery Email Sent",
-          text2: "Check your email to reset your password.",
+      const response = await postData(
+        `${ENDPOINTS.forgotpassword}?email=${data.email}`,
+      );
+
+      if (response.status === 400) {
+        setMessage({text: 'Account not found', type: 'error'});
+      } else {
+        setMessage({
+          text: 'Password reset token sent to your email.',
+          type: 'success',
         });
+
+        setTimeout(() => {
+          navigation.navigate('resetPassword', {
+            isEmail: inputDetails.email,
+          });
+        }, 3000);
       }
-      setTimeout(() => {
-        navigation.navigate("updatePassword");
-      }, 1500);
-    } catch (error) {
-      console.error("Password recovery error:", error);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Something went wrong. Please try again later.",
+    } catch (error: any) {
+      setMessage({
+        text: 'Account not found',
+        type: 'error',
       });
     } finally {
       setLoading(false);
@@ -84,119 +96,148 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ImageBackground
-        source={IMAGES.MonogramImg}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 30}
-        >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              contentContainerStyle={styles.scrollContainer}
-              keyboardShouldPersistTaps="handled"
-            >
-              {/* Back Button */}
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-              >
-                <CustomIcon Icon={ICONS.BackArrowIcon} height={20} width={20} />
-              </TouchableOpacity>
+    <ImageBackground
+      source={IMAGES.authBackground}
+      style={[
+        styles.background,
+        {
+          paddingTop: verticalScale(50) + insets.top,
+          paddingBottom: verticalScale(10) + insets.bottom,
+        },
+      ]}>
+      <View style={styles.headerContainer}>
+        <Image source={IMAGES.logo} style={styles.logo} />
+      </View>
+      <KeyboardAvoidingContainer
+        backgroundColor="transparent"
+        style={styles.keyboardAvoidingContainer}>
+        <View style={styles.footerContainer}>
+          {errors.email && (
+            <View style={styles.errorContainer}>
+              <CustomText
+                fontSize={14}
+                fontFamily="medium"
+                color={COLORS.red}
+                style={styles.errorText}>
+                {errors.email}
+              </CustomText>
+            </View>
+          )}
+          {message.text && (
+            <View style={styles.errorContainer}>
+              <CustomText
+                fontSize={14}
+                fontFamily="medium"
+                color={message.type === 'success' ? COLORS.green : COLORS.red}
+                style={styles.errorText}>
+                {message.text}
+              </CustomText>
+            </View>
+          )}
+          <View style={styles.inputContainer}>
+            <TextInput
+              value={inputDetails.email}
+              onChangeText={text =>
+                setInputDetails({...inputDetails, email: text})
+              }
+              placeholder="Email Address"
+              placeholderTextColor={COLORS.white}
+              style={styles.textInput}
+            />
+          </View>
 
-              {/* Card */}
-              <View style={styles.card}>
-                <CustomText
-                  fontFamily="bold"
-                  fontSize={24}
-                  color={COLORS.black}
-                  style={styles.title}
-                >
-                  Forgot Password
-                </CustomText>
-                <CustomText
-                  fontFamily="regular"
-                  fontSize={12}
-                  color={COLORS.Grey}
-                  style={styles.subtitle}
-                >
-                  Enter your email to reset your password.
-                </CustomText>
-
-                <TextInput
-                  ref={inputRef}
-                  style={styles.input}
-                  value={email}
-                  onChangeText={(text) => setEmail(text.trimStart())}
-                  placeholder="Email"
-                  placeholderTextColor={COLORS.Grey}
-                  keyboardType="email-address"
-                  returnKeyType="done"
-                  autoCapitalize="none"
-                  onSubmitEditing={handlePasswordRecovery}
-                />
-
-                <CustomButton
-                  label="Continue"
-                  onPress={handlePasswordRecovery}
-                  loading={loading}
-                />
-              </View>
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </ImageBackground>
-    </SafeAreaView>
+          <PrimaryButton
+            isFullWidth
+            title="Forgot password"
+            onPress={handleForgotPassword}
+            isLoading={loading}
+          />
+          <CustomText
+            fontSize={12}
+            fontFamily="medium"
+            style={styles.legalText}>
+            By continuing, you acknowledge and accept GymLogix's{' '}
+            <CustomText color={COLORS.yellow} fontFamily="medium" fontSize={12}>
+              privacy policy
+            </CustomText>{' '}
+            and{' '}
+            <CustomText color={COLORS.yellow} fontFamily="medium" fontSize={12}>
+              Terms & Conditions
+            </CustomText>
+          </CustomText>
+        </View>
+      </KeyboardAvoidingContainer>
+    </ImageBackground>
   );
 };
 
 export default ForgotPassword;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  backgroundImage: {
+  // Background Styles
+  background: {
     flex: 1,
     width: wp(100),
+    height: hp(100),
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: verticalScale(10),
+    backgroundColor: COLORS.black,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "flex-end",
+
+  // Header (Top Section) Styles
+  headerContainer: {
+    alignItems: 'center',
+    gap: verticalScale(10),
   },
-  backButton: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    zIndex: 10,
-    backgroundColor: COLORS.white,
-    padding: horizontalScale(6),
-    borderRadius: 10,
+  logo: {
+    height: verticalScale(66),
+    width: wp(80),
+    resizeMode: 'contain',
   },
-  card: {
-    backgroundColor: COLORS.white,
-    paddingVertical: verticalScale(30),
+
+  // Keyboard Avoiding Container Styles
+  keyboardAvoidingContainer: {
+    justifyContent: 'flex-end',
+  },
+
+  // Footer (Bottom Section) Styles
+  footerContainer: {
+    alignItems: 'center',
+    gap: verticalScale(10),
+  },
+  inputContainer: {
+    marginVertical: verticalScale(20),
+    gap: verticalScale(15),
+  },
+  textInput: {
+    backgroundColor: 'transparent',
+    width: wp(85),
+    borderBottomColor: COLORS.white,
+    borderBottomWidth: 1,
+    fontFamily: FONTS.medium,
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: horizontalScale(10),
+    color: COLORS.white,
+  },
+  errorContainer: {
+    backgroundColor: COLORS.darkBrown,
     paddingHorizontal: horizontalScale(20),
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingVertical: verticalScale(5),
+    borderRadius: 10,
+    width: '90%',
+    alignSelf: 'center',
+    marginBottom: 40,
   },
-  title: {
-    marginBottom: verticalScale(10),
+  errorText: {
+    textAlign: 'center',
   },
-  subtitle: {
-    marginBottom: verticalScale(20),
-  },
-  input: {
-    width: "100%",
-    backgroundColor: COLORS.lightGrey,
-    padding: verticalScale(15),
-    marginBottom: verticalScale(20),
-    fontSize: 16,
-    color: COLORS.black,
+  legalText: {
+    textAlign: 'center',
+    width: wp(90),
+    marginTop: verticalScale(20),
+    color: COLORS.white,
+    fontSize: 12,
+    fontFamily: 'medium',
   },
 });

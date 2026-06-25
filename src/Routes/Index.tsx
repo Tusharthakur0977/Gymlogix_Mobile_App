@@ -1,42 +1,60 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
-import {StyleSheet} from 'react-native';
-import Account from '../Screens/Account';
-import Home from '../Screens/Home';
-import Search from '../Screens/Search';
-import Shop from '../Screens/Shop';
-import Splash from '../Screens/Splash';
-import StyleGuide from '../Screens/StyleGuide';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import BottomTabBar from "../Components/BottomTabBar";
+import AddNewExercise from "../Screens/AddNewExercise";
+import AddNewMeal from "../Screens/AddNewMeal";
+import AddNewWorkout from "../Screens/AddNewWorkout";
+import EditMealDetails from "../Screens/EditMealDetails";
+import ExerciseList from "../Screens/ExerciseList";
+import ExerciseSettings from "../Screens/ExerciseSettings";
+import ForgotPassword from "../Screens/ForgotPassword";
+import HOME from "../Screens/Home";
+import IngredientList from "../Screens/IngredientList";
+import INSIGHT from "../Screens/Insight";
+import LogMeal from "../Screens/LogMeal";
+import MealDetails from "../Screens/MealDetails";
+import PLAN from "../Screens/Plan";
+import ResetPassword from "../Screens/ResetPassword";
+import SavedWorkouts from "../Screens/SavedWorkouts";
+import SETTINGS from "../Screens/Settings";
+import SignIn from "../Screens/SignIn";
+import SignUp from "../Screens/SignUp";
+import Splash from "../Screens/Splash";
+import STATS from "../Screens/Stats";
+import Welcome from "../Screens/Welcome";
+import WorkoutProgramDetails from "../Screens/WorkoutProgramDetails";
+import WorkoutResult from "../Screens/WorkoutResult";
 import {
-  BottomStackTabParams,
+  AuthStackParams,
+  BottomTabParams,
   MainStackParams,
   RootStackParams,
-} from '../Typings/route';
-import BottomTabBar from '../Components/BottomTabBar';
-import Cart from "../Screens/Cart";
-import SingleProduct from "../Screens/SingleProduct";
-import Login from "../Screens/Login";
-import OtpScreen from "../Screens/OtpScreen";
-import Collection from "../Screens/Collection";
-import RegisterScreen from "../Screens/RegisterScreen";
-import ForgotPassword from "../Screens/ForgotPassword";
-import UpdatePassword from "../Screens/UpdatePassword";
-import TermsOfServices from "../Screens/TermsofServices";
-import PrivacyCookies from "../Screens/PrivacyCookies";
-import RefundPolicy from "../Screens/RefundPolicy";
-import FaqScreen from "../Screens/FaqScreen";
-import FindAStore from "../Screens/FindAStore";
-import HijabDesign from "../Screens/HijabDesign";
-import HowToBuy from "../Screens/HowToBuy";
-import PaymentOption from "../Screens/PaymentOptions";
+} from "../Typings/route";
 
-const Root = createNativeStackNavigator<RootStackParams>();
+const RootStack = createNativeStackNavigator<RootStackParams>();
+const Auth = createNativeStackNavigator<AuthStackParams>();
+const Tabs = createBottomTabNavigator<BottomTabParams>();
 const Main = createNativeStackNavigator<MainStackParams>();
-const Tabs = createBottomTabNavigator<BottomStackTabParams>();
 
 const Routing = () => {
-  const tabStack = () => {
+  function AuthStack() {
+    return (
+      <Auth.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Auth.Screen name="welcome" component={Welcome} />
+        <Auth.Screen name="signIn" component={SignIn} />
+        <Auth.Screen name="signUp" component={SignUp} />
+        <Auth.Screen name="forgotpassword" component={ForgotPassword} />
+        <Auth.Screen name="resetPassword" component={ResetPassword} />
+      </Auth.Navigator>
+    );
+  }
+
+  function TabStack() {
     return (
       <Tabs.Navigator
         screenOptions={{
@@ -44,46 +62,84 @@ const Routing = () => {
         }}
         tabBar={(props) => <BottomTabBar {...props} />}
       >
-        <Tabs.Screen name="home" component={Home} />
-        <Tabs.Screen name="shop" component={Shop} />
-        <Tabs.Screen name="search" component={Search} />
-        <Tabs.Screen name="styleGuide" component={StyleGuide} />
-        <Tabs.Screen name="account" component={Account} />
+        <Tabs.Screen
+          options={{
+            title: "HOME",
+          }}
+          name="HOME"
+          component={HOME}
+        />
+        <Tabs.Screen
+          options={{
+            title: "PLAN",
+          }}
+          name="PLAN"
+          component={PLAN}
+        />
+        <Tabs.Screen
+          options={{
+            title: "STATS",
+          }}
+          name="STATS"
+          component={STATS}
+        />
+        <Tabs.Screen
+          options={{
+            title: "INSIGHT",
+          }}
+          name="INSIGHT"
+          component={INSIGHT}
+        />
+        <Tabs.Screen
+          options={{
+            title: "SETTINGS",
+          }}
+          name="SETTINGS"
+          component={SETTINGS}
+        />
       </Tabs.Navigator>
     );
-  };
+  }
 
-  const mainStack = () => {
+  function MianStack() {
     return (
-      <Main.Navigator screenOptions={{ headerShown: false }}>
-        <Main.Screen name="tabs" component={tabStack} />
-        <Main.Screen name="cart" component={Cart} />
-        <Main.Screen name="singleProduct" component={SingleProduct} />
-        <Main.Screen name="login" component={Login} />
-        <Main.Screen name="collection" component={Collection} />
-        <Main.Screen name="registerScreen" component={RegisterScreen} />
-        <Main.Screen name="forgotPassword" component={ForgotPassword} />
-        <Main.Screen name="updatePassword" component={UpdatePassword} />
-        <Main.Screen name="termsOfServices" component={TermsOfServices} />
-        <Main.Screen name="privacyCookies" component={PrivacyCookies} />
-        <Main.Screen name="refundPolicy" component={RefundPolicy} />
-        <Main.Screen name="faqScreen" component={FaqScreen} />
-        <Main.Screen name="findAStore" component={FindAStore} />
-        <Main.Screen name="hijabDesign" component={HijabDesign} />
-        <Main.Screen name="howToBuy" component={HowToBuy} />
-        <Main.Screen name="paymentOption" component={PaymentOption} />
+      <Main.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Main.Screen name="tabs" component={TabStack} />
+        <Main.Screen name="mealDetails" component={MealDetails} />
+        <Main.Screen name="editMealDetails" component={EditMealDetails} />
+        <Main.Screen name="logMeal" component={LogMeal} />
+        <Main.Screen
+          name="workoutProgramDetails"
+          component={WorkoutProgramDetails}
+        />
+        <Main.Screen name="workoutResult" component={WorkoutResult} />
+        <Main.Screen name="exerciseList" component={ExerciseList} />
+        <Main.Screen name="addNewWorkout" component={AddNewWorkout} />
+        <Main.Screen name="addNewExercise" component={AddNewExercise} />
+        <Main.Screen name="savedWorkouts" component={SavedWorkouts} />
+        <Main.Screen name="exerciseSettings" component={ExerciseSettings} />
+        <Main.Screen name="addNewMeal" component={AddNewMeal} />
+        <Main.Screen name="ingredientList" component={IngredientList} />
       </Main.Navigator>
     );
-  };
+  }
 
   return (
-    <Root.Navigator screenOptions={{ headerShown: false }}>
-      <Root.Screen name="splash" component={Splash} />
-      <Root.Screen name="mainStack" component={mainStack} />
-    </Root.Navigator>
+    <RootStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animation: "none",
+      }}
+    >
+      <RootStack.Screen name="splash" component={Splash} />
+      <RootStack.Screen name="authStack" component={AuthStack} />
+      <RootStack.Screen name="mainStack" component={MianStack} />
+    </RootStack.Navigator>
   );
 };
 
 export default Routing;
-
-const styles = StyleSheet.create({});

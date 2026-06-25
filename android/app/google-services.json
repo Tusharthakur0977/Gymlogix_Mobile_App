@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "489484992575",
+    "project_id": "gymlogix-2bbc1",
+    "storage_bucket": "gymlogix-2bbc1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489484992575:android:b714ec292ae9e49053388a",
+        "android_client_info": {
+          "package_name": "com.gymlogix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489484992575-est7tarl67pqipcqnp524igrck6ev7hf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gymlogix",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "489484992575-tm5ncgo29f0frucjlmolugo65o6st27i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gymlogix",
+            "certificate_hash": "3b8277a7b06ca4770b8041288f476927467dc6a1"
+          }
+        },
+        {
+          "client_id": "489484992575-21a4bbf1shlr2g7vhkhsbqvk16s97mi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6pyXFgj-rZDUkwx364eQXq7xvWKNW7C0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489484992575-21a4bbf1shlr2g7vhkhsbqvk16s97mi2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

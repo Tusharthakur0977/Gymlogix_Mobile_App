@@ -1,10 +1,16 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, Text, SafeAreaView, Modal } from "react-native";
-import NL from "react-native-network-logger";
-import { useState } from "react";
-import COLORS from "../Utilities/Colors";
+import React from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+  Modal,
+} from 'react-native';
+import NL from 'react-native-network-logger';
+import {useState} from 'react';
+import COLORS from '../Utilities/Colors';
 
-const NetworkLogger = ({ onPress }: { onPress?: () => void }) => {
+const NetworkLogger = ({onPress}: {onPress?: () => void}) => {
   const [isNetworkModalVisible, setIsNetworkVIsible] = useState(false);
   return (
     <>
@@ -12,14 +18,12 @@ const NetworkLogger = ({ onPress }: { onPress?: () => void }) => {
         style={styles.modal}
         visible={isNetworkModalVisible}
         // onBackButtonPress={() => setIsNetworkVIsible(false)}
-
       >
         <SafeAreaView style={styles.contentContainer}>
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={() => setIsNetworkVIsible(false)}
-          >
-            <Text style={styles.closeButtonTitle}>{"CLOSE"}</Text>
+            onPress={() => setIsNetworkVIsible(false)}>
+            <Text style={styles.closeButtonTitle}>{'CLOSE'}</Text>
           </TouchableOpacity>
           <NL />
         </SafeAreaView>
@@ -29,9 +33,8 @@ const NetworkLogger = ({ onPress }: { onPress?: () => void }) => {
         onPress={() => {
           onPress && onPress();
           setIsNetworkVIsible(true);
-        }}
-      >
-        <Text style={styles.content}>{"Network Logs"}</Text>
+        }}>
+        <Text style={styles.content}>{'Network Logs'}</Text>
       </TouchableOpacity>
     </>
   );
@@ -45,18 +48,18 @@ const styles = StyleSheet.create({
   container: {
     width: 45,
     height: 45,
-    position: "absolute",
+    position: 'absolute',
     left: 24,
     bottom: 80,
     borderRadius: 45,
-    backgroundColor: COLORS.DarkBrown,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: COLORS.yellow,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     fontSize: 9,
-    textAlign: "center",
-    color: "white",
+    textAlign: 'center',
+    color: 'white',
   },
   contentContainer: {
     flex: 1,
@@ -66,7 +69,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   closeButtonTitle: {
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

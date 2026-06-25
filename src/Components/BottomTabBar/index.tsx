@@ -1,23 +1,23 @@
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import React, { FC, useCallback, useRef, useState, useEffect } from "react";
+import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import React, {FC, useCallback, useRef} from 'react';
 import {
   Animated,
   FlatList,
-  Keyboard,
+  StyleSheet,
   TouchableOpacity,
   View,
-  StyleSheet,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ICONS from "../../Assets/Icons";
-import COLORS from "../../Utilities/Colors";
+} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import ICONS from '../../Assets/Icons';
+import {useAppSelector} from '../../Redux/store';
+import COLORS from '../../Utilities/Colors';
 import {
   horizontalScale,
   isAndroid,
   verticalScale,
-} from "../../Utilities/Metrics";
-import { CustomText } from "../CustomText";
-import CustomIcon from "../CustomIcon";
+} from '../../Utilities/Metrics';
+import CustomIcon from '../CustomIcon';
+import {CustomText} from '../CustomText';
 
 type Tab = {
   name: string;
@@ -28,63 +28,46 @@ type Tab = {
 
 const tabs: Tab[] = [
   {
-    name: "Home",
-    icon: ICONS.HomeIcon,
-    activIcon: ICONS.SelectedHomeIcon,
-    route: "home",
+    name: 'HOME',
+    icon: ICONS.HomeTabIcon,
+    activIcon: ICONS.HomeTabIcon,
+    route: 'HOME',
   },
   {
-    name: "Shop",
-    icon: ICONS.ShopIcon,
-    activIcon: ICONS.SelectedShopIcon,
-    route: "shop",
+    name: 'PLAN',
+    icon: ICONS.PlanTabIcon,
+    activIcon: ICONS.PlanTabIcon,
+    route: 'PLAN',
   },
   {
-    name: "Search",
-    icon: ICONS.SearchIcon,
-    activIcon: ICONS.SelectedSearchIcon,
-    route: "search",
+    name: 'STATS',
+    icon: ICONS.StatsTabIcon,
+    activIcon: ICONS.StatsTabIcon,
+    route: 'STATS',
   },
   {
-    name: "Style Guide",
-    icon: ICONS.StyleGuideIcon,
-    activIcon: ICONS.SelectedSGIcon,
-    route: "styleGuide",
+    name: 'INSIGHT',
+    icon: ICONS.InsightTabIcon,
+    activIcon: ICONS.InsightTabIcon,
+    route: 'INSIGHT',
   },
+
   {
-    name: "Account",
-    icon: ICONS.AccountIcon,
-    activIcon: ICONS.SelectedAccountIcon,
-    route: "account",
+    name: 'SETTINGS',
+    icon: ICONS.SettingsTabIcon,
+    activIcon: ICONS.SettingsTabIcon,
+    route: 'SETTINGS',
   },
 ];
 
-const BottomTabBar: FC<BottomTabBarProps> = (props) => {
+const BottomTabBar: FC<BottomTabBarProps> = props => {
   const insets = useSafeAreaInsets();
-  const { state, navigation } = props;
+  const {state, navigation, descriptors} = props;
   const currentRoute = state.routes[state.index].name;
 
-  const [isKeyboard, setIsKeyboard] = useState(false);
+  const {homeActiveIndex} = useAppSelector(state => state.initial);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setIsKeyboard(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setIsKeyboard(false);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const scaleValue = useRef(new Animated.Value(1)).current;
 
   const handleTabPress = useCallback(
     (tab: Tab) => {
@@ -92,95 +75,103 @@ const BottomTabBar: FC<BottomTabBarProps> = (props) => {
         navigation.navigate(tab.route as never);
       }
     },
-    [navigation, currentRoute]
+    [navigation, currentRoute],
   );
 
   const renderTab = useCallback(
-    ({ item }: { item: Tab }) => {
+    ({item, index}: {item: Tab; index: number}) => {
       const isActive = currentRoute === item.route;
+
       return (
         <TouchableOpacity
           style={styles.tab}
           onPress={() => handleTabPress(item)}
-          activeOpacity={0.7}
-        >
+          activeOpacity={0.7}>
           <CustomIcon
             Icon={isActive ? item.activIcon : item.icon}
-            height={20}
-            width={20}
+            height={30}
+            width={30}
           />
           <CustomText
-            fontSize={10}
-            color={isActive ? COLORS.DarkBrown : COLORS.DarkGrey}
-            style={
-              isActive
-                ? {
-                    textDecorationLine: "underline",
-                    textDecorationColor: COLORS.DarkBrown,
-                  }
-                : undefined
-            }
-          >
+            fontSize={8}
+            fontWeight={isActive ? '500' : '400'}
+            color={COLORS.white}>
             {item.name}
           </CustomText>
+          <View
+            style={{
+              width: 30,
+              height: 5,
+              backgroundColor: isActive ? COLORS.yellow : COLORS.black,
+              borderRadius: 5,
+              marginTop: 8,
+            }}></View>
         </TouchableOpacity>
       );
     },
-    [handleTabPress, currentRoute]
+    [handleTabPress, currentRoute, scaleValue],
   );
 
+  if (homeActiveIndex !== 0) {
+    return null;
+  }
+
   return (
-    <View
-      style={{
-        backgroundColor: COLORS.white,
-        borderTopWidth: 2,
-        borderColor: COLORS.MediumGrey,
-      }}
-    >
-      <View style={styles.container}>
-        <View style={styles.tabWrapper}>
-          <FlatList
-            data={tabs}
-            renderItem={renderTab}
-            keyExtractor={(item) => item.route}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.tabBar}
-            contentContainerStyle={styles.tabContent}
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.tabWrapper}>
+        <FlatList
+          data={tabs}
+          renderItem={renderTab}
+          keyExtractor={item => item.route}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.tabBar, {}]}
+          contentContainerStyle={styles.tabContent}
+        />
       </View>
     </View>
   );
 };
 
+export default BottomTabBar;
+
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: COLORS.brown,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: verticalScale(15),
-    borderTopLeftRadius: verticalScale(20),
-    borderTopRightRadius: verticalScale(20),
   },
   tabWrapper: {
     flex: 1,
     marginHorizontal: horizontalScale(10),
   },
   tabBar: {
+    paddingTop: verticalScale(5),
     paddingBottom: isAndroid ? verticalScale(0) : verticalScale(5),
   },
   tabContent: {
     flexGrow: 1,
-    justifyContent: "space-around",
+    justifyContent: 'space-around',
   },
   tab: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    alignSelf: "center",
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignSelf: 'center',
     zIndex: 99,
     gap: verticalScale(5),
   },
-});
 
-export default BottomTabBar;
+  middleButton: {
+    position: 'absolute',
+    backgroundColor: COLORS.white,
+    borderRadius: 30,
+    height: 48,
+    width: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1001, // Ensure it’s above the tab bar
+    boxShadow: '0px 4px 12px 0px #FF003B80',
+  },
+});

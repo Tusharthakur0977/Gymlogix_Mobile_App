@@ -1,0 +1,28 @@
+const COLORS = {
+  darkBrown: "#1F1A16",
+  brown: "#332B28",
+  lightBrown: "#524540",
+  blue: "#2482DC",
+  sharpBlue: "#0070F0",
+  skyBlue: "#36B8DC",
+  yellow: "#DC8236",
+  white: "#FFFFFF",
+  nickel: "#757471",
+  lightGreen: "#87C2A5",
+  whiteTail: "#F4EDE5",
+  lightGrey: "#E2E2E2",
+  black: "#000000",
+  red: "#FF0000",
+  green: "#45FF20",
+  whiteGreenish: "#F4EDE5BF",
+  lighterBrown: "#977F76",
+  skinColor: "#93776C",
+  crimson: "#DC5736",
+  darkPink: "#EC1C4E",
+  sparkleGreen: "#24EF00",
+  teal: "#36DCC0",
+  darkGray: "#2A2A2A",
+  orange: "#FF8C00",
+};
+
+export default COLORS;
